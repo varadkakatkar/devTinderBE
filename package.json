@@ -4,12 +4,14 @@
   "description": "Tinder for developers",
   "main": "index.js",
   "scripts": {
-    "start" : "node src/app.js",
-    "dev" :"nodemon src/app.js"
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
   },
   "author": "Varad K",
   "license": "ISC",
   "dependencies": {
-    "express": "^5.1.0"
+    "dotenv": "^16.6.1",
+    "express": "^5.1.0",
+    "mongoose": "^9.2.4"
   }
 }
