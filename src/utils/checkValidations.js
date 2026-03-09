@@ -2,14 +2,20 @@ const validator = require("validator");
 const { GENDER_OPTIONS, ALLOWED_UPDATE_FIELDS } = require("./constants");
 
 // For signup/add: all required fields must be present and validated
-const checkSignupValidations = (req, res, next) => {
+const checkSignupValidations = async (req, res, next) => {
     try {
         const { firstName, lastName, emailId, password, age, gender, photoUrl } = req.body || {};
 
         if (!firstName || !emailId || !password || !age) {
             return res.status(400).json({ error: "First name, email, password and age are required" });
+        }else if(firstName.length < 3 || firstName.length > 20){
+            return res.status(400).json({ error: "First name must be between 3 and 20 characters" });
         }
-        if (!validator.isEmail(emailId)) {
+        if (lastName && lastName.length < 3 || lastName.length > 20){
+            return res.status(400).json({ error: "Last name must be between 3 and 20 characters" });
+        }
+
+        if (emailId && !validator.isEmail(emailId)) {
             return res.status(400).json({ error: "Invalid email" });
         }
         if (!validator.isStrongPassword(password)) {
@@ -26,6 +32,7 @@ const checkSignupValidations = (req, res, next) => {
         }
         next();
     } catch (err) {
+        console.error("Error in checkSignupValidations:", err.message);
         next(err);
     }
 };
@@ -67,6 +74,7 @@ const checkUpdateValidations = (req, res, next) => {
         }
         next();
     } catch (err) {
+        console.error("Error in checkUpdateValidations:", err.message);
         next(err);
     }
 };

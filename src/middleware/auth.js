@@ -1,3 +1,10 @@
+const jwt = require("jsonwebtoken");
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {      
+    throw new Error("JWT_SECRET is not defined. Set it in .env");
+}
+
+
 const adminAuth = (req, res, next) => {
     console.log("Admin auth getting is checked");
     const token = "XYZ";
@@ -24,7 +31,24 @@ const userAuth = (req, res, next) => {
 
 }
 
+const verifyToken = async (req, res, next) => {
+    try {
+        const token = req.cookies.token;
+        if (!token) {
+            return res.status(401).json({ error: "Unauthorized Token is not present" });
+        }
+        const decoded = await jwt.verify(token, process.env.JWT_SECRET);
+        req.userId = decoded.userId;
+        console.log("User ID:-----------------------------------", req.userId);
+        next();
+    } catch (error) {
+        console.error("Error in verifyToken:", error.message);
+        res.status(500).json({ error: error.message });
+    }
+
+}   
 module.exports = {
     adminAuth,
-    userAuth
+    userAuth,
+    verifyToken
 };
