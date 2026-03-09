@@ -10,15 +10,17 @@ const { userAuth, adminAuth } = require("./middleware/auth");
 const connectDB = require("./config/database");
 const { PORT, HOST, ALLOWED_UPDATE_FIELDS } = require("./utils/constants");
 const UserModel = require("./models/user");
-const { checkSignupValidations, checkUpdateValidations } = require("./utils/checkValidations");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const {
+  checkSignupValidations,
+  checkUpdateValidations,
+} = require("./utils/checkValidations");
+
 const JWT_SECRET = process.env.JWT_SECRET;
-  if (!JWT_SECRET) {
-    throw new Error("JWT_SECRET is not defined. Set it in .env");
-  }
-  const { verifyToken } = require("./middleware/auth");
-  console.log("JWT_SECRET:", JWT_SECRET);
+if (!JWT_SECRET) {
+  throw new Error("JWT_SECRET is not defined. Set it in .env");
+}
+const { verifyToken } = require("./middleware/auth");
+console.log("JWT_SECRET:", JWT_SECRET);
 // });
 
 /*// app.use("/test", (req, res) => {
@@ -89,23 +91,23 @@ app.post("/login", async (req, res) => {
     if (!password) {
       return res.status(400).json({ error: "Password is required" });
     }
-   
+
     const user = await UserModel.findOne({ emailId: RegExp(emailId, "i") });
     if (!user) {
       return res.status(404).json({ error: "User not found or Invalid email" });
     }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await user.validatePassword(password);
 
     if (!isPasswordValid) {
       return res.status(401).json({ error: "Invalid password" });
     }
-    const token = jwt.sign({ userId: user._id}, process.env.JWT_SECRET, { expiresIn: "1h" });
-    res.cookie("token", token,
-      {
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
-        httpOnly: true,
-      }
-    );
+    // const token = jwt.sign({ userId: user._id}, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const token = await user.getJWT();
+    console.log("token ", token);
+    res.cookie("token", token, {
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+      httpOnly: true,
+    });
     res.status(200).json({
       message: "Login successful",
       user,
@@ -117,10 +119,8 @@ app.post("/login", async (req, res) => {
   }
 });
 
-
 app.get("/profile", verifyToken, async (req, res) => {
   try {
-   
     const userId = req.userId;
     const user = await UserModel.findById(userId);
     if (!user) {
@@ -140,10 +140,11 @@ app.post("/signup", checkSignupValidations, async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     req.body.password = hashedPassword;
-    const { firstName, lastName, emailId, password, age, gender, photoUrl } = req.body;
+    const { firstName, lastName, emailId, password, age, gender, photoUrl } =
+      req.body;
 
     const user = new UserModel({
-      firstName, 
+      firstName,
       lastName,
       emailId,
       password: hashedPassword,
@@ -205,7 +206,6 @@ app.patch("/user", checkUpdateValidations, async (req, res) => {
     const user = await UserModel.findByIdAndUpdate(userid, req.body, {
       new: true,
       returnDocument: "after",
-      
     });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
