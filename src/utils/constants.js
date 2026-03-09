@@ -27,4 +27,6 @@ module.exports = {
   DB_PASSWORD,
   DB_HOST,
   HOST,
+  GENDER_OPTIONS: ['male', 'female', 'other'],
+  ALLOWED_UPDATE_FIELDS: ['firstName', 'lastName', 'password', 'age', 'gender', 'photoUrl', 'about', 'skills'],
 };

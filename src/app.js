@@ -6,8 +6,10 @@ app.use(jsonParser);
 
 const { userAuth, adminAuth } = require("./middleware/auth");
 const connectDB = require("./config/database");
-const { PORT, HOST } = require("./utils/constants");
+const { PORT, HOST, ALLOWED_UPDATE_FIELDS } = require("./utils/constants");
 const UserModel = require("./models/user");
+const { checkSignupValidations, checkUpdateValidations } = require("./utils/checkValidations");
+
 
 /* // app.use("/hello", (req, res) => {
 //   res.send("Hello from server ............");
@@ -73,7 +75,7 @@ app.use((err, req, res, next) => {
 
  */
 
-app.post("/signup", async (req, res) => {
+app.post("/signup", checkSignupValidations, async (req, res) => {
   try {
     const user = new UserModel({
       firstName: req.body.firstName,
@@ -129,7 +131,7 @@ app.delete("/user", async (req, res) => {
   }
 });
 
-app.patch("/user", async (req, res) => {
+app.patch("/user", checkUpdateValidations, async (req, res) => {
   try {
     const userid = req.query.id;
     const user = await UserModel.findByIdAndUpdate(userid, req.body, {
