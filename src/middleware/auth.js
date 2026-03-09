@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET;
+const UserModel = require("../models/user");
 if (!JWT_SECRET) {      
     throw new Error("JWT_SECRET is not defined. Set it in .env");
 }
@@ -39,7 +40,12 @@ const verifyToken = async (req, res, next) => {
         }
         const decoded = await jwt.verify(token, process.env.JWT_SECRET);
         req.userId = decoded.userId;
+        req.user = await UserModel.findById(decoded.userId); // this is the user object
+        console.log("User:-----------------------------------", req.user);
         console.log("User ID:-----------------------------------", req.userId);
+        if (!req.user) {
+            return res.status(401).json({ error: "User not found" });
+        }
         next();
     } catch (error) {
         console.error("Error in verifyToken:", error.message);

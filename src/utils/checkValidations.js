@@ -50,7 +50,7 @@ const checkUpdateValidations = (req, res, next) => {
             });
         }
 
-        const { emailId, password, age, gender, photoUrl } = req.body || {};
+        const { emailId, password, age, gender, photoUrl, skills } = req.body || {};
 
         if (emailId !== undefined && !validator.isEmail(emailId)) {
             return res.status(400).json({ error: "Invalid email" });
@@ -61,7 +61,7 @@ const checkUpdateValidations = (req, res, next) => {
         if (age !== undefined && age < 18) {
             return res.status(400).json({ error: "Age must be greater than 18" });
         }
-        if (gender !== undefined && !GENDER_OPTIONS.includes(gender)) {
+        if (gender !== undefined && !GENDER_OPTIONS.includes(String(gender).toLowerCase())) {
             return res.status(400).json({ error: "Invalid gender" });
         }
         if (photoUrl !== undefined && photoUrl && !validator.isURL(photoUrl)) {
@@ -69,7 +69,8 @@ const checkUpdateValidations = (req, res, next) => {
         }
         if (skills !== undefined && !Array.isArray(skills)) {
             return res.status(400).json({ error: "Skills must be an array" });
-        }else if(skills.length >10){
+        }
+        if (skills !== undefined && skills.length > 10) {
             return res.status(400).json({ error: "Skills must be less than 10" });
         }
         next();
@@ -79,4 +80,18 @@ const checkUpdateValidations = (req, res, next) => {
     }
 };
 
-module.exports = { checkSignupValidations, checkUpdateValidations };
+
+const profileEditData = (req) => {
+    const allowedFields = ALLOWED_UPDATE_FIELDS;
+
+    const isEditAllowed = Object.keys(req.body).every(
+        (field) => allowedFields.includes(field) && req.body[field] !== undefined
+    );
+    return isEditAllowed; 
+};
+
+module.exports = {
+  checkSignupValidations,
+  checkUpdateValidations,
+  profileEditData,
+};

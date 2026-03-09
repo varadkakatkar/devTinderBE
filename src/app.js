@@ -6,21 +6,26 @@ app.use(jsonParser);
 const cookieParser = require("cookie-parser");
 
 app.use(cookieParser());
-const { userAuth, adminAuth } = require("./middleware/auth");
 const connectDB = require("./config/database");
-const { PORT, HOST, ALLOWED_UPDATE_FIELDS } = require("./utils/constants");
+const { PORT, HOST } = require("./utils/constants");
 const UserModel = require("./models/user");
-const {
-  checkSignupValidations,
-  checkUpdateValidations,
-} = require("./utils/checkValidations");
+const { checkUpdateValidations } = require("./utils/checkValidations");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
   throw new Error("JWT_SECRET is not defined. Set it in .env");
 }
-const { verifyToken } = require("./middleware/auth");
 console.log("JWT_SECRET:", JWT_SECRET);
+
+const authRouter = require("./routes/auth");
+const profileRouter = require("./routes/profile");
+const requestRouter = require("./routes/requests");
+
+
+app.use("/", authRouter);
+app.use("/", profileRouter);
+app.use("/", requestRouter);
+
 // });
 
 /*// app.use("/test", (req, res) => {
@@ -82,86 +87,14 @@ app.use((err, req, res, next) => {
 });
 
  */
-app.post("/login", async (req, res) => {
-  try {
-    const { emailId, password } = req.body;
-    if (!emailId) {
-      return res.status(400).json({ error: "Email is required" });
-    }
-    if (!password) {
-      return res.status(400).json({ error: "Password is required" });
-    }
 
-    const user = await UserModel.findOne({ emailId: RegExp(emailId, "i") });
-    if (!user) {
-      return res.status(404).json({ error: "User not found or Invalid email" });
-    }
-    const isPasswordValid = await user.validatePassword(password);
 
-    if (!isPasswordValid) {
-      return res.status(401).json({ error: "Invalid password" });
-    }
-    // const token = jwt.sign({ userId: user._id}, process.env.JWT_SECRET, { expiresIn: "1h" });
-    const token = await user.getJWT();
-    console.log("token ", token);
-    res.cookie("token", token, {
-      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
-      httpOnly: true,
-    });
-    res.status(200).json({
-      message: "Login successful",
-      user,
-      token,
-    });
-  } catch (error) {
-    console.error("Error in login:", error.message);
-    res.status(500).json({ error: error.message });
-  }
-});
 
-app.get("/profile", verifyToken, async (req, res) => {
-  try {
-    const userId = req.userId;
-    const user = await UserModel.findById(userId);
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-    res.status(200).json({
-      message: "Profile fetched successfully",
-      user,
-    });
-  } catch (error) {
-    console.error("Error in profile:", error.message);
-    res.status(500).json({ error: error.message });
-  }
-});
 
-app.post("/signup", checkSignupValidations, async (req, res) => {
-  try {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    req.body.password = hashedPassword;
-    const { firstName, lastName, emailId, password, age, gender, photoUrl } =
-      req.body;
-
-    const user = new UserModel({
-      firstName,
-      lastName,
-      emailId,
-      password: hashedPassword,
-      age,
-      gender,
-      photoUrl,
-    });
-    await user.save();
-    res.status(201).json({ message: "User created successfully", user });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
 // Get User by email
 
-app.get("/user", async (req, res) => {
+/* app.get("/user", async (req, res) => {
   try {
     const email = req.query.email;
     const user = await UserModel.findOne({ emailId: RegExp(email, "i") });
@@ -215,7 +148,7 @@ app.patch("/user", checkUpdateValidations, async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-});
+}); */
 
 connectDB()
   .then(() => {
