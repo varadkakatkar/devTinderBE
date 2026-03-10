@@ -15,6 +15,8 @@ const DB_URL =
   (DB_USER && DB_PASSWORD && DB_HOST
     ? `mongodb+srv://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}`
     : null);
+const ALLOWED_REQUEST_STATUS = ["interested", "ignored", "accepted", "rejected"];
+
 
 module.exports = {
   DB_URL,
@@ -38,4 +40,9 @@ module.exports = {
     "about",
     "skills",
   ],
+  ALLOWED_REQUEST_STATUS,
 };
+
+/* 
+
+*/
