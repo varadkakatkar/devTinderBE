@@ -17,7 +17,7 @@ const DB_URL =
     : null);
 const ALLOWED_REQUEST_STATUS = ["interested", "ignored", "accepted", "rejected"];
 
-
+const USER_SAFE_DATA = "firstName lastName photoUrl emailId about skills age gender";
 module.exports = {
   DB_URL,
   PORT,
@@ -41,6 +41,7 @@ module.exports = {
     "skills",
   ],
   ALLOWED_REQUEST_STATUS,
+  USER_SAFE_DATA,
 };
 
 /* 
