@@ -35,12 +35,20 @@ userRouter.get("/user/connections", verifyToken, async (req, res) => {
         }).populate("fromUserId", USER_SAFE_DATA).populate("toUserId", USER_SAFE_DATA);
 
         const data = connections.map(connection => {
+            const otherUser = connection.fromUserId._id.equals(loggedInUser._id)
+                ? connection.toUserId
+                : connection.fromUserId;
             return {
-                _id: connection._id,
-                fromUserId: connection.fromUserId,
-                toUserId: connection.toUserId,
-                status: connection.status,
-            }
+                _id: otherUser._id,
+                firstName: otherUser.firstName,
+                lastName: otherUser.lastName,
+                photoUrl: otherUser.photoUrl,
+                emailId: otherUser.emailId,
+                about: otherUser.about,
+                skills: otherUser.skills,
+                age: otherUser.age,
+                gender: otherUser.gender,
+            };
         });
         res.status(200).json({ message: "Connections fetched successfully", data: data });
 
