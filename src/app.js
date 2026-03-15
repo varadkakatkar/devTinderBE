@@ -4,8 +4,12 @@ const app = express();
 const jsonParser = express.json();
 app.use(jsonParser);
 const cookieParser = require("cookie-parser");
-
+var cors = require('cors')
 app.use(cookieParser());
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true,
+}));
 const connectDB = require("./config/database");
 const { PORT, HOST } = require("./utils/constants");
 const UserModel = require("./models/user");
