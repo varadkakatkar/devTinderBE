@@ -1,0 +1,60 @@
+{
+  "message": "Users fetched successfully",
+  "data": [
+    {
+      "_id": "661b0a111111111111111101",
+      "firstName": "Aarav",
+      "lastName": "Mehta",
+      "photoUrl": "https://i.pravatar.cc/300?img=1",
+      "emailId": "aarav.mehta@example.com",
+      "about": "Backend engineer · Node.js · MongoDB",
+      "skills": ["Node.js", "Express", "MongoDB"],
+      "age": 26,
+      "gender": "male"
+    },
+    {
+      "_id": "661b0a222222222222222202",
+      "firstName": "Siya",
+      "lastName": "Kapoor",
+      "photoUrl": "https://randomuser.me/api/portraits/women/44.jpg",
+      "emailId": "siya.kapoor@example.com",
+      "about": "Frontend dev · React · TypeScript",
+      "skills": ["React", "TypeScript", "Tailwind"],
+      "age": 24,
+      "gender": "female"
+    },
+    {
+      "_id": "661b0a333333333333333303",
+      "firstName": "Rohan",
+      "lastName": "Iyer",
+      "photoUrl": "https://i.pravatar.cc/300?img=33",
+      "emailId": "rohan.iyer@example.com",
+      "about": "Full-stack · learning system design",
+      "skills": ["JavaScript", "PostgreSQL", "Docker"],
+      "age": 28,
+      "gender": "male"
+    },
+    {
+      "_id": "661b0a444444444444444404",
+      "firstName": "Ananya",
+      "lastName": "Desai",
+      "photoUrl": "https://i.pravatar.cc/300?img=47",
+      "emailId": "ananya.desai@example.com",
+      "about": "Mobile + web · performance nerd",
+      "skills": ["React Native", "Node.js"],
+      "age": 25,
+      "gender": "female"
+    },
+    {
+      "_id": "661b0a555555555555555505",
+      "firstName": "Kabir",
+      "lastName": "Singh",
+      "photoUrl": "https://picsum.photos/seed/kabir/400/400",
+      "emailId": "kabir.singh@example.com",
+      "about": "DevOps curious · CI/CD",
+      "skills": ["Docker", "AWS", "GitHub Actions"],
+      "age": 27,
+      "gender": "male"
+    }
+  ]
+}

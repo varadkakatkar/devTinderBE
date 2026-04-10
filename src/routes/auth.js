@@ -29,6 +29,8 @@ authRouter.post("/login", async (req, res) => {
     res.cookie("token", token, {
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
       httpOnly: true,
+      path: "/",
+      sameSite: "lax",
     });
     res.status(200).json({
       message: "Login successful",

@@ -1,4 +1,5 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const userRouter = express.Router();
 const UserModel = require("../models/user");
 const ConnectionRequestModel = require("../models/connectionRequest");
@@ -91,12 +92,21 @@ userRouter.get("/feed", verifyToken, async (req, res) => {
       hideUsersFromFeed.add(req.toUserId.toString());
     });
 
-    const users = await UserModel.find({
-      $and: [
-        { _id: { $nin: Array.from(hideUsersFromFeed) } },
-        { _id: { $ne: loggedInUser._id } },
-      ],
-    }).select(USER_SAFE_DATA).skip(skip).limit(limit);
+    // `{ _id: { $nin: [] } }` matches no documents in MongoDB.
+    const hideIds = [...hideUsersFromFeed].map(
+      (id) => new mongoose.Types.ObjectId(id),
+    );
+    const feedFilter = {
+      $and: [{ _id: { $ne: loggedInUser._id } }],
+    };
+    if (hideIds.length > 0) {
+      feedFilter.$and.push({ _id: { $nin: hideIds } });
+    }
+
+    const users = await UserModel.find(feedFilter)
+      .select(USER_SAFE_DATA)
+      .skip(skip)
+      .limit(limit);
 
     res.status(200).json({ message: "Users fetched successfully", data: users });
   } catch (error) {
