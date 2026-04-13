@@ -1,9 +1,8 @@
-const express = require('express');
+const express = require("express");
 const profileRouter = express.Router();
 const UserModel = require("../models/user");
 const { verifyToken } = require("../middleware/auth");
 const { profileEditData } = require("../utils/checkValidations");
-
 
 profileRouter.get("/profile/view", verifyToken, async (req, res) => {
   try {
@@ -23,22 +22,23 @@ profileRouter.get("/profile/view", verifyToken, async (req, res) => {
 });
 
 profileRouter.patch("/profile/edit", verifyToken, async (req, res) => {
-try {
-  const isEditAllowed = profileEditData(req);
-  if (!isEditAllowed) {
-    throw new Error("Invalid fields");
-  }
-  const loggedInUser = req.user;
-  Object.keys(req.body).forEach(key => {
-    if (req.body[key] !== undefined) {
-      loggedInUser[key] = req.body[key];
+  try {
+    const isEditAllowed = profileEditData(req);
+    if (!isEditAllowed) {
+      throw new Error("Invalid fields");
     }
-  });
-  await loggedInUser.save();
-  res.status(200).json({ message: "Profile updated successfully", loggedInUser });
-} catch (error) {
-  console.error("Error in profile/edit:", error.message);
-  res.status(500).json({ error: error.message });
-}
+    const user = req.user;
+    Object.keys(req.body).forEach((key) => {
+      if (req.body[key] !== undefined) {
+        user[key] = req.body[key];
+      }
+    });
+    const editRes = await user.save();
+    console.log("editRes ", editRes);
+    res.status(200).json({ message: "Profile updated successfully", user });
+  } catch (error) {
+    console.error("Error in profile/edit:", error.message);
+    res.status(500).json({ error: error.message });
+  }
 });
 module.exports = profileRouter;

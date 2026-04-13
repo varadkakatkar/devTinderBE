@@ -15,9 +15,15 @@ const DB_URL =
   (DB_USER && DB_PASSWORD && DB_HOST
     ? `mongodb+srv://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}`
     : null);
-const ALLOWED_REQUEST_STATUS = ["interested", "ignored", "accepted", "rejected"];
+const ALLOWED_REQUEST_STATUS = [
+  "interested",
+  "ignored",
+  "accepted",
+  "rejected",
+];
 
-const USER_SAFE_DATA = "firstName lastName photoUrl emailId about skills age gender";
+const USER_SAFE_DATA =
+  "firstName lastName photoUrl emailId about skills age gender";
 module.exports = {
   DB_URL,
   PORT,
@@ -34,6 +40,7 @@ module.exports = {
     "firstName",
     "lastName",
     "password",
+    "emailId",
     "age",
     "gender",
     "photoUrl",
