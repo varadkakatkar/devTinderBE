@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema(
     },
     age: {
       type: Number,
-      required: true,
+      required: false,
       min: 18,
     },
     gender: {
@@ -77,8 +77,6 @@ userSchema.methods.getJWT = async function () {
 
   return token;
 };
-
-
 
 userSchema.methods.validatePassword = async function (passwordInputByUser) {
   const user = this;

@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
-    "seed:dummy": "node scripts/seed-dummy-feed-users.js"
+    "seed:dummy": "node scripts/seed-dummy-feed-users.js",
+    "seed:received": "node scripts/seed-received-requests.js"
   },
   "author": "Varad K",
   "license": "ISC",

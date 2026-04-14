@@ -59,8 +59,18 @@ authRouter.post("/signup", checkSignupValidations, async (req, res) => {
       gender,
       photoUrl,
     });
-    await user.save();
-    res.status(201).json({ message: "User created successfully", user });
+    const savedUser = await user.save();
+    const token = await savedUser.getJWT();
+    console.log("token ", token);
+    res.cookie("token", token, {
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+      httpOnly: true,
+      path: "/",
+      sameSite: "lax",
+    });
+    res
+      .status(201)
+      .json({ message: "User created successfully", data: savedUser });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

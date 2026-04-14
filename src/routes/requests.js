@@ -55,7 +55,7 @@ requestRouter.post(
 );
 
 requestRouter.post(
-  "/request/review/send/:status/:requestId",
+  "/request/review/:status/:requestId",
   verifyToken,
   async (req, res) => {
     try {
@@ -66,7 +66,7 @@ requestRouter.post(
       if (!allowedStatus.includes(status)) {
         return res.status(400).json({ message: "Status not allowed" });
       }
-      const connectionRequest = await ConnectionRequestModel.findById({
+      const connectionRequest = await ConnectionRequestModel.findOne({
         _id: requestId,
         toUserId: loggedInUser._id,
         status: "interested",
@@ -80,10 +80,8 @@ requestRouter.post(
       }
 
       connectionRequest.status = status;
-     const data =  await connectionRequest.save();
-      res
-        .status(200)
-        .json({ message: `Connection request ${status}`, data });
+      const data = await connectionRequest.save();
+      res.status(200).json({ message: `Connection request ${status}`, data });
     } catch (error) {
       console.error("Error in request/review/send:", error.message);
       res.status(500).json({ error: error.message });
